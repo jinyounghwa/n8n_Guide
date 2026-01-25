@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webhook 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .container {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>n8n Webhook 테스트</h1>
+        <p>아래 버튼을 클릭하면 POST 요청을 보내고 응답을 확인할 수 있습니다.</p>
+
+        <button onclick="testWebhook()">Webhook 테스트</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function testWebhook() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '요청 중...';
+
+            try {
+                const response = await fetch('http://localhost:5678/webhook/65420b95-7bed-412b-9773-d4fc0c8ad16c', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: 'Hello World'
+                    })
+                });
+
+                const data = await response.json();
+
+                resultDiv.innerHTML = '<div class="success">✓ 성공!</div>\n\n';
+                resultDiv.innerHTML += '<strong>응답 데이터:</strong>\n';
+                resultDiv.innerHTML += JSON.stringify(data, null, 2);
+
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">✗ 오류 발생</div>\n\n';
+                resultDiv.innerHTML += error.message;
+            }
+        }
+    </script>
+</body>
+</html>
